@@ -1,3 +1,8 @@
 {
-  "presets": ["es2015", "stage-0", "react"]
+  "presets": ["es2015", "stage-0", "react"],
+  "plugins": [
+    ["transform-react-jsx", {
+      "pragma": "require('glamor/react').createElement" // default pragma is React.createElement
+    }]
+  ]
 }

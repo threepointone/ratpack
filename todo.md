@@ -1,0 +1,4 @@
+DON'T GET DISTRACTED BY CUSTOM BABELRC WEBPACK CONFIG FOR NOW 
+
+- setup hot reloading (*not* hmr)
+- 
