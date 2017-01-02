@@ -1,6 +1,10 @@
 {
-  "presets": ["es2015", "stage-0", "react"],
+  "presets": [ [ "babel-preset-env", {
+    "targets": {
+      "browsers": ["last 2 versions", "safari >= 7"]
+    } } ], "stage-0", "react" ],
   "plugins": [
+    "glamor/babel-hoist",
     ["transform-react-jsx", {
       "pragma": "require('glamor/react').createElement" // default pragma is React.createElement
     }]

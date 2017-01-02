@@ -6,7 +6,7 @@
     
 
 import { app, BrowserWindow }  from 'electron'
-// Module to control application life.
+// Module to control application file.
 // const app = electron.app
 // // Module to create native browser window.
 // const BrowserWindow = electron.BrowserWindow

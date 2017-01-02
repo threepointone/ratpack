@@ -1,4 +1,30 @@
-DON'T GET DISTRACTED BY CUSTOM BABELRC WEBPACK CONFIG FOR NOW 
+- x - start webpack, babel shindig 
+- x - expose react, react-dom, react-router, glamor
+- x - open a browser window 
+- x - hot reloading
+- x - compilation error overlay
+- x - local .babelrc override
+- x - implicit react require
 
-- setup hot reloading (*not* hmr)
-- 
+- drop another file to load that instead 
+- @public pragma 
+- recently opened files ( / folders?)
+- configurations / presets 
+- updates for main app?
+- dock experience
+- menubar experience
+- @public, @babel, @webpack pragma
+- preferences pane
+- favicon
+- perf / stats / fps measurement helpers 
+- polyfills
+- do a 'prod build' 
+- proxy?
+- node?
+- linting?
+- any language?
+- windows?
+- redbox?
+- flow / typescript / etc 
+- implicit React.render for default/App export?
+- click link / shortcut to open devtools?
