@@ -2,14 +2,43 @@ import React from 'react'
 import path from 'path'
 import { render } from 'react-dom'
 import 'glamor/reset'
+import hash from 'glamor/lib/hash'
 
 import openBrowser from 'react-dev-utils/openBrowser'
+
+const electron = require('electron')
+const app = electron.app || electron.remote.app
+
 
 import WebpackDevServer from 'webpack-dev-server'
 import webpack from 'webpack'
 
 import { css, presets } from 'glamor'
 const yellow = '#f7df1e'
+
+
+import DataStore from 'nedb'
+let db = new DataStore({
+  filename: path.join(app.getPath('userData'), 'store.db'),
+  autoload: true
+})
+db.find({ _id: 'recently' }, (err, docs) => {
+  if(docs.length === 0) {
+    db.insert({ _id: 'recently', files: [] }, err => {
+      if(err) return console.error(err)
+      console.log('db initialized')
+    })
+  }
+  else console.log('db restarted')
+})
+
+function times(n, fn) {
+  let arr = []
+  for(let i= 0; i< n; i++) {
+    arr.push(fn(i))
+  }
+  return arr
+}
 
 css.global('html, body, #root', { position: 'relative', width: '100%', height: '100%', display: 'block', backgroundColor: yellow })
 
@@ -21,30 +50,76 @@ const Logo = () => <div css={{ width: 100, height: 100, position: 'absolute', bo
 
 class App extends React.Component {
   state = {
+    tick: 0,
     filepath: undefined,
     webpackCompiler: null,
-    webpackServer: null
+    webpackServer: null,
+    recently: [],
+    errors: [],
+    port: 0,
+    running: false
   }
-  onDrop = e => {
-    e.preventDefault()
-    e.stopPropagation()
-    let filepath = e.nativeEvent.dataTransfer.files[0].path
-    // todo - clear previous instances 
+  refreshRecentList() {
+    db.find({ _id: 'recently' }, (err, docs) => {
+      if(err) {
+        this.setState({
+          errors: [ ...this.state.errors, err ]
+        })
+        return 
+      }
+      this.setState({
+        recently: docs[0].files
+      })
+    })
+  }
+  componentDidMount() {
+    this.refreshRecentList()
+    this.interval = setInterval(() => {
+      if(this.state.running) {
+        this.setState({
+          tick: (this.state.tick + 1)%4 // (new Date()).getSeconds() % 4
+        })  
+      }
+      
+    }, 400)
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval)
+    if(this.state.webpackServer) {
+      this.state.webpackServer.close()  
+    }    
+  }
+  loadFile(filepath) {
+    db.update({ _id: 'recently' }, { _id: 'recently', files: [ { path: filepath }, ...this.state.recently.filter(x => x.path !== filepath) ].slice(0, 10) }, {}, err => {
+      if(err) {
+        this.setState({
+          errors: [ ...this.state.errors, err ]
+        })
+        return         
+      } 
+      this.refreshRecentList()           
+    })
+    if(this.state.webpackServer) {
+      this.state.webpackServer.close()
+    }
     let webpackCompiler = webpack({
       entry: [ require.resolve('react-dev-utils/webpackHotDevClient.js'), filepath ],
       output: {
-        path: path.join(__dirname, 'public'),
+        path: path.join(__dirname, '../public'),
         filename: 'bundle.js'
+      },
+      performance: {
+        hints: false
       },
       module: {
         rules: [ {
           test: /\.js$/,
           exclude: /node_modules/,
-          loader: 'babel-loader',
-          query: {
+          loader: require.resolve('babel-loader'),
+          options: {
             'presets': [ [ require('babel-preset-env'), { 'targets': {
               'browsers': [ 'last 2 versions', 'safari >= 7' ]
-            } } ], require('babel-preset-stage-0'), require('babel-preset-react') ],
+            }, modules: false } ], require('babel-preset-stage-0'), require('babel-preset-react') ],
             'plugins': [
               require('glamor/babel-hoist'),
               require('babel-plugin-transform-react-require').default,
@@ -65,37 +140,39 @@ class App extends React.Component {
         new webpack.ProvidePlugin({
           Glamor: 'glamor/react'
         })
-      ]
+      ],
+      stats: 'errors-only'
     })
     let webpackServer = new WebpackDevServer(webpackCompiler, {
-      contentBase: path.join(__dirname, 'public'),
+      contentBase: [ path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ],
       historyApiFallback: true,
-      // inline: true,
       compress: true,
-      // port
       // proxy 
       // setup()
       // staticOptions 
-      clientLogLevel: 'info',
 
-      // quiet: false,
-      // noInfo: false,
-      // lazy: true,
-      // filename: 'bundle.js',
-      // watchOptions: {
-      //   aggregateTimeout: 300,
-      //   poll: 1000
-      // },
-      // publicPath: '/public/',
-      // headers: { "X-Custom-Header": "yes" },
+      quiet: true,      
       stats: { colors: false }
 
     })
-    webpackServer.listen(3000)
-    openBrowser('http://localhost:3000')
-    this.setState({ webpackCompiler, webpackServer })
-
-
+    // this is to workaround some weird bug where webpack keeps the first loaded file 
+    // also makes it look cool ha
+    let h = hash(filepath, filepath.length)+ ''
+    let port = 3000 + parseInt(h.substr(h.length - 4), 10)
+    webpackServer.listen(port)
+    openBrowser('http://localhost:' + port)
+    this.setState({ webpackCompiler, webpackServer, port, filepath, running: true })
+  }
+  onDrop = e => {
+    e.preventDefault()
+    e.stopPropagation()
+    let filepath = e.nativeEvent.dataTransfer.files[0].path
+    this.loadFile(filepath)
+  }
+  clearRecentList() {
+    db.update({ _id: 'recently' }, { _id: 'recently', files: [] }, () => {
+      this.refreshRecentList()
+    })
   }
   
   render() {
@@ -105,8 +182,18 @@ class App extends React.Component {
       onDrop={this.onDrop}>      
         
       <div css={{ fontWeight: 'bolder', fontSize: 32, padding: 20, [presets.Phablet]: { fontSize: 64 } }}>
-        Drop a .js file here to get started 
-      </div>      
+      { this.state.running ? 
+        `${path.basename(this.state.filepath)} running at 
+        localhost:${this.state.port}${times(this.state.tick, () => '.').join('')}`
+        : 'Drop a .js file here to get started '}
+        
+      
+      </div> 
+      { this.state.recently.length > 0 && <div css={{ padding: 20 }}>
+        <h1>previously...</h1>
+        {this.state.recently.map(x => <div onClick={() => this.loadFile(x.path)}>{x.path}</div>)}
+        <h4 onClick={() => this.clearRecentList()}>clear list</h4>
+      </div>}
       
       <Logo/>
       
@@ -116,4 +203,3 @@ class App extends React.Component {
 }
  
 render(<App/>, document.getElementById('root'))
-

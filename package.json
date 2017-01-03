@@ -1,10 +1,13 @@
 {
-  "name": "reactpack",
+  "name": "ratpack",
   "version": "1.0.0",
   "description": "components for build systems",
+  "productName": "ratpack",
   "main": "bootstrap.js",
   "scripts": {
     "start": "electron -r babel-register .",
+    "package-app": "electron-packager . --out out",
+    "build": "babel src -d app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sunil Pai <threepointone@gmail.com>",
@@ -47,5 +50,8 @@
       "react/jsx-uses-react": "error",
       "jsx-quotes": 0
     }
+  },
+  "devDependencies": {
+    "electron-packager": "^8.4.0"
   }
 }

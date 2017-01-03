@@ -5,26 +5,40 @@
 - x - compilation error overlay
 - x - local .babelrc override
 - x - implicit react require
+- x - drop another file to load that instead 
+- x - recently opened files
+- x - 'running on port...'
+- ~ - packaged app  
 
-- drop another file to load that instead 
-- @public pragma 
-- recently opened files ( / folders?)
-- configurations / presets 
+- css, image, etc loaders 
 - updates for main app?
 - dock experience
-- menubar experience
-- @public, @babel, @webpack pragma
+- messaging on webpack error 
+- polyfills
 - preferences pane
+- @public pragma 
+- configurations / presets 
+- @public, @babel, @webpack, @proxy pragma
+- menubar experience
 - favicon
 - perf / stats / fps measurement helpers 
-- polyfills
 - do a 'prod build' 
 - proxy?
 - node?
+- auto install?
 - linting?
 - any language?
 - windows?
 - redbox?
 - flow / typescript / etc 
 - implicit React.render for default/App export?
-- click link / shortcut to open devtools?
+
+
+/*
+  @webpack 
+  @loader { test: /\.css$/, loader: 'css' }
+  @alias react preact-compat
+  @alias react-dom preact-compat
+  @modules ./my-modules
+  @root ./my-core-modules 
+*/

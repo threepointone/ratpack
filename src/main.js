@@ -1,11 +1,8 @@
-// import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
-
-// installExtension(REACT_DEVELOPER_TOOLS)
-//     .then((name) => console.log(`Added Extension:  ${name}`))
-//     .catch((err) => console.log('An error occurred: ', err));
-    
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 
 import { app, BrowserWindow }  from 'electron'
+
+
 // Module to control application file.
 // const app = electron.app
 // // Module to create native browser window.
@@ -17,16 +14,17 @@ let mainWindow
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 800, height: 600 })
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err))
 
-  // here you could setup a browserify instance that generates app.js 
-  // giving you hotloading for your components. very nice. 
+  mainWindow = new BrowserWindow({ width: 800, height: 600 })
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -49,6 +47,10 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+})
+
+app.on('open-file', e => {
+  console.log(e)
 })
 
 app.on('activate', function () {

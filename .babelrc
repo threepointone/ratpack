@@ -8,5 +8,8 @@
     ["transform-react-jsx", {
       "pragma": "require('glamor/react').createElement" // default pragma is React.createElement
     }]
+  ],
+  "ignore": [
+    "node_modules/*"
   ]
 }
