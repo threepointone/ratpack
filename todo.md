@@ -8,9 +8,10 @@
 - x - drop another file to load that instead 
 - x - recently opened files
 - x - 'running on port...'
+- x - css, image, etc loaders 
 - ~ - packaged app  
 
-- css, image, etc loaders 
+
 - updates for main app?
 - dock experience
 - messaging on webpack error 
