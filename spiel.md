@@ -1,7 +1,7 @@
 ratpack
 ---
 
-[todo - gif]
+![ratpack](https://i.imgur.com/b0lE9ZW.gif)
 
 ratpack is for beginners, tinkerers, ents, cylons.
 
