@@ -1,3 +1,4 @@
+import autoprefixer from 'autoprefixer'
 import React from 'react'
 import path from 'path'
 import { render } from 'react-dom'
@@ -113,6 +114,19 @@ class App extends React.Component {
       },
       module: {
         rules: [ {
+          exclude: [
+            /\.html$/,
+            /\.(js|jsx)$/,
+            /\.css$/,
+            /\.json$/,
+            /\.svg$/
+          ],
+          loader: require.resolve('url-loader'),
+          query: {
+            limit: 10000,
+            name: 'static/media/[name].[hash:8].[ext]'
+          }
+        }, {
           test: /\.js$/,
           exclude: /node_modules/,
           loader: require.resolve('babel-loader'),
@@ -126,7 +140,29 @@ class App extends React.Component {
               [ require('babel-plugin-transform-react-jsx'), {
                 'pragma': 'Glamor.createElement' // default pragma is React.createElement
               } ]
-            ]
+            ],
+            cacheDirectory: true
+          }
+        }, 
+        {
+          test: /\.css$/,
+          use: [
+            require.resolve('style-loader'), 
+            {
+              loader: require.resolve('css-loader'),
+              options: { importLoaders: 1 } 
+            }, 
+            require.resolve('postcss-loader')  // options in the plugins section below             
+          ]
+        }, 
+        {
+          test: /\.json$/,
+          loader: require.resolve('json-loader')
+        }, {
+          test: /\.svg$/,
+          loader: require.resolve('file-loader'),
+          query: {
+            name: 'static/media/[name].[hash:8].[ext]'
           }
         } ]
       },
@@ -139,9 +175,30 @@ class App extends React.Component {
         }),
         new webpack.ProvidePlugin({
           Glamor: 'glamor/react'
+        }),
+        new webpack.LoaderOptionsPlugin({
+          test: /\.css$/,
+          debug: true,
+          options: {
+            postcss: [
+              autoprefixer({
+                browsers: [
+                  '>1%',
+                  'last 4 versions',
+                  'Firefox ESR',
+                  'not ie < 9' // React doesn't support IE8 anyway
+                ]
+              })
+            ]
+          }
         })
       ],
-      stats: 'errors-only'
+      stats: 'errors-only',
+      node: {
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty'
+      }      
     })
     let webpackServer = new WebpackDevServer(webpackCompiler, {
       contentBase: [ path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ],
