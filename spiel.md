@@ -64,7 +64,6 @@ Some of the tech we're using - webpack@2, react, electron, babel, and assorted g
 
 additional feature list 
 - includes loaders for css, images, json etc 
-- includes glamor's createElement replacement for painless css-in-js 
 - shows compilation errors inline in your browser (via react-dev-utils)
 - todo - will autoupdate itself whenever I make a 'release', so you're using the latest versions of presets and packaged libs almost as soon they're out
 - includes babel presets env, stage-0 and react. Heck, I'll even throw in decorators. 
