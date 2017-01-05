@@ -135,11 +135,11 @@ class App extends React.Component {
               'browsers': [ 'last 2 versions', 'safari >= 7' ]
             }, modules: false } ], require('babel-preset-stage-0'), require('babel-preset-react') ],
             'plugins': [
-              require('glamor/babel-hoist'),
-              require('babel-plugin-transform-react-require').default,
-              [ require('babel-plugin-transform-react-jsx'), {
-                'pragma': 'Glamor.createElement' // default pragma is React.createElement
-              } ]
+              // require('glamor/babel-hoist'),
+              require('babel-plugin-transform-react-require').default
+              // [ require('babel-plugin-transform-react-jsx'), {
+              //   'pragma': 'Glamor.createElement' // default pragma is React.createElement
+              // } ]
             ],
             cacheDirectory: true
           }
@@ -173,9 +173,9 @@ class App extends React.Component {
         new webpack.DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
         }),
-        new webpack.ProvidePlugin({
-          Glamor: 'glamor/react'
-        }),
+        // new webpack.ProvidePlugin({
+        //   Glamor: 'glamor/react'
+        // }),
         new webpack.LoaderOptionsPlugin({
           test: /\.css$/,
           debug: true,
