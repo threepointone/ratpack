@@ -33,6 +33,26 @@ db.find({ _id: 'recently' }, (err, docs) => {
   else console.log('db restarted')
 })
 
+// create .ratpack/node_modules if not exists 
+import mkdirp from 'mkdirp'
+import touch from 'touch'
+import fs from 'fs'
+
+mkdirp(path.join(app.getPath('home'), '.ratpack'), err => {
+  if(err) {
+    throw err
+  }
+  let pkjson = path.join(app.getPath('home'), '.ratpack/package.json')
+  if(!fs.existsSync(pkjson)) {
+    touch.sync(pkjson)
+    fs.writeFileSync(pkjson, JSON.stringify({
+      name: 'ratpack-local',
+      description: 'these modules are available to all scripts launched by ratpack'
+    }))  
+  }
+  
+})
+
 function times(n, fn) {
   let arr = []
   for(let i= 0; i< n; i++) {
@@ -168,7 +188,7 @@ class App extends React.Component {
         } ]
       },
       resolve: {
-        modules: [ 'node_modules', path.join(__dirname, '../node_modules') ]
+        modules: [ 'node_modules', path.join(app.getPath('home'), '.ratpack/node_modules'),  path.join(__dirname, '../node_modules') ]
       },
       plugins: [
         new webpack.DefinePlugin({
