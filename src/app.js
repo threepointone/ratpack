@@ -136,6 +136,7 @@ class App extends React.Component {
             }, modules: false } ], require('babel-preset-stage-0'), require('babel-preset-react') ],
             'plugins': [
               // require('glamor/babel-hoist'),
+              require('babel-plugin-transform-decorators-legacy').default,
               require('babel-plugin-transform-react-require').default
               // [ require('babel-plugin-transform-react-jsx'), {
               //   'pragma': 'Glamor.createElement' // default pragma is React.createElement
