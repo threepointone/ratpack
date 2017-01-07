@@ -33,7 +33,7 @@
 - redbox?
 - flow / typescript / etc 
 - implicit React.render for default/App export?
-
+- performance hints 
 
 /*
   @webpack 

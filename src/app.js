@@ -4,6 +4,9 @@ import path from 'path'
 import { render } from 'react-dom'
 import 'glamor/reset'
 import hash from 'glamor/lib/hash'
+import pragmas from './pragmas'
+
+import glob2regexp from 'glob-to-regexp'
 
 import openBrowser from 'react-dev-utils/openBrowser'
 
@@ -98,8 +101,7 @@ class App extends React.Component {
     this.interval = setInterval(() => {
       this.setState({
         tick: (this.state.tick + 1) % 4 
-      })  
-      
+      })      
     }, 400)
  
   }
@@ -124,127 +126,21 @@ class App extends React.Component {
     if(this.state.webpackServer) {
       this.state.webpackServer.close()
     }
-    let webpackCompiler = webpack({
-      devtool: 'cheap-module-source-map',
-      entry: [ require.resolve('react-dev-utils/webpackHotDevClient.js'), require.resolve('./polyfills'), filepath ],
-      output: {
-        path: path.join(__dirname, '../public'),
-        filename: 'bundle.js'
-      },
-      performance: {
-        hints: false
-      },
-      module: {
-        rules: [ {
-          exclude: [
-            /\.html$/,
-            /\.(js|jsx)$/,
-            /\.css$/,
-            /\.json$/,
-            /\.svg$/
-          ],
-          loader: require.resolve('url-loader'),
-          query: {
-            limit: 10000,
-            name: 'static/media/[name].[hash:8].[ext]'
-          }
-        }, {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          loader: require.resolve('babel-loader'),
-          options: {
-            'presets': [ 
-              [ require('babel-preset-env'), { 
-                'targets': {
-                  'browsers': [ 'last 2 versions', 'safari >= 7' ]
-                }, 
-                modules: false 
-              } ], 
-              require('babel-preset-stage-0'), 
-              require('babel-preset-react') 
-            ],
-            'plugins': [
-              require('babel-plugin-transform-decorators-legacy').default,
-              require('babel-plugin-transform-react-require').default
-            ],
-            cacheDirectory: true
-          }
-        }, 
-        {
-          test: /\.css$/,
-          use: [
-            require.resolve('style-loader'), 
-            {
-              loader: require.resolve('css-loader'),
-              options: { importLoaders: 1 } 
-            }, 
-            require.resolve('postcss-loader')  // options in the plugins section below             
-          ]
-        }, 
-        {
-          test: /\.json$/,
-          loader: require.resolve('json-loader')
-        }, {
-          test: /\.svg$/,
-          loader: require.resolve('file-loader'),
-          query: {
-            name: 'static/media/[name].[hash:8].[ext]'
-          }
-        } ]
-      },
-      resolve: {
-        modules: [ 'node_modules', path.join(app.getPath('home'), '.ratpack/node_modules'),  path.join(__dirname, '../node_modules') ]
-      },
-      plugins: [
-        new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
-        }),
-        // new webpack.ProvidePlugin({
-        //   Glamor: 'glamor/react'
-        // }),
-        new webpack.LoaderOptionsPlugin({
-          test: /\.css$/,
-          debug: true,
-          options: {
-            postcss: [
-              autoprefixer({
-                browsers: [
-                  '>1%',
-                  'last 4 versions',
-                  'Firefox ESR',
-                  'not ie < 9' // React doesn't support IE8 anyway
-                ]
-              })
-            ]
-          }
-        })
-      ],
-      stats: 'errors-only',
-      node: {
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty'
-      }      
-    })
-    let webpackServer = new WebpackDevServer(webpackCompiler, {
-      contentBase: [ path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ],
-      historyApiFallback: true,
-      compress: true,
-      // proxy 
-      // setup()
-      // staticOptions 
 
-      quiet: true,      
-      stats: { colors: false }
+    // simultaneously start watching the entry file 
+    // if any of the pragmas change, redo this shindig 
+    fs.readFile(filepath, 'utf8', (err, src) => {      
+      let options = pragmas(src)
+      this.setState({ ...webpackify(filepath, options), filepath, running: true, pragmas: options })
+      // fs.watch(filepath, e => {
+      //   if(e === 'rename') {
+      //     // ???
+      //     return
+      //   }
 
-    })
-    // this is to workaround some weird bug where webpack keeps the first loaded file 
-    // also makes it look cool ha
-    let h = hash(filepath, filepath.length)+ ''
-    let port = 3000 + parseInt(h.substr(h.length - 4), 10)
-    webpackServer.listen(port)
-    openBrowser('http://localhost:' + port)
-    this.setState({ webpackCompiler, webpackServer, port, filepath, running: true })
+      // })
+    })    
+    
   }
   onDrop = e => {
     e.preventDefault()
@@ -283,6 +179,138 @@ class App extends React.Component {
     </div>
     
   }
+}
+
+function webpackify(filepath, options = {}) {
+  console.log(options)
+  let webpackCompiler = webpack({
+    devtool: options.devtool || 'cheap-module-source-map',
+    entry: [ require.resolve('react-dev-utils/webpackHotDevClient.js'), require.resolve('./polyfills'), filepath ],
+    output: {
+      path: path.join(__dirname, '../public'),
+      filename: 'bundle.js'
+    },
+    performance: {
+      hints: false
+    },
+    module: {
+      rules: [ 
+        ...(options.rules || []).map(({ loader, glob, options }) => ({ loader: require.resolve(loader), options, test: glob2regexp(glob) })), 
+        {
+          exclude: [
+            /\.html$/,
+            /\.(js|jsx)$/,
+            /\.css$/,
+            /\.json$/,
+            /\.svg$/
+          ],
+          loader: require.resolve('url-loader'),
+          query: {
+            limit: 10000,
+            name: 'static/media/[name].[hash:8].[ext]'
+          }
+        }, {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          loader: require.resolve('babel-loader'),
+          options: {
+            'presets': [ 
+              [ require('babel-preset-env'), { 
+                'targets': {
+                  'browsers': [ 'last 2 versions', 'safari >= 7' ]
+                }, 
+                modules: false 
+              } ], 
+              require('babel-preset-stage-0'), 
+              require('babel-preset-react') 
+            ],
+            'plugins': [
+              options.jsx ? [ require('babel-plugin-transform-react-jsx'),
+                { 'pragma': options.jsx } ] : undefined,
+              require('babel-plugin-transform-decorators-legacy').default,
+              require('babel-plugin-transform-react-require').default
+            ].filter(x => !!x),
+            cacheDirectory: true
+          }
+        }, 
+        {
+          test: /\.css$/,
+          use: [
+            require.resolve('style-loader'), 
+            {
+              loader: require.resolve('css-loader'),
+              options: { importLoaders: 1 } 
+            }, 
+            require.resolve('postcss-loader')  // options in the plugins section below             
+          ]
+        }, 
+        {
+          test: /\.json$/,
+          loader: require.resolve('json-loader')
+        }, {
+          test: /\.svg$/,
+          loader: require.resolve('file-loader'),
+          query: {
+            name: 'static/media/[name].[hash:8].[ext]'
+          }
+        } 
+      ]
+    },
+    resolve: {
+      alias: options.alias || {},
+      modules: [ 'node_modules', path.join(app.getPath('home'), '.ratpack/node_modules'),  path.join(__dirname, '../node_modules') ]
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        ...options.define || {}
+      }),
+      new webpack.ProvidePlugin(options.provide || {}),
+      new webpack.LoaderOptionsPlugin({
+        test: /\.css$/,
+        debug: true,
+        options: {
+          postcss: [
+            autoprefixer({
+              browsers: [
+                '>1%',
+                'last 4 versions',
+                'Firefox ESR',
+                'not ie < 9' // React doesn't support IE8 anyway
+              ]
+            })
+          ]
+        }
+      })
+    ],
+    stats: 'errors-only',
+    node: {
+      fs: 'empty',
+      net: 'empty',
+      tls: 'empty'
+    }      
+  })
+  let webpackServer = new WebpackDevServer(webpackCompiler, {
+    contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ].filter(x => !!x),
+    historyApiFallback: true,
+    compress: true,
+    proxy: options.proxy || {},
+      // proxy 
+      // setup()
+      // staticOptions 
+
+    quiet: true,      
+    stats: { colors: false }
+
+  })
+    // this is to workaround some weird bug where webpack keeps the first loaded file 
+    // also makes it look cool ha
+  let h = hash(filepath, filepath.length)+ ''
+  let port = 3000 + parseInt(h.substr(h.length - 4), 10)
+  webpackServer.listen(port)
+  openBrowser('http://localhost:' + port)
+  return { webpackServer, webpackCompiler, port }
+
 }
  
 render(<App/>, document.getElementById('root'))
