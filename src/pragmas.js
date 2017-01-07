@@ -65,33 +65,31 @@ export default function parse(src) {
         break
       }
       case 'loader': {
-        let regex = /(\S+)(\s+)([A-Za-z0-9@\-_\.\\\/\:]+)(\s+)/
+        let regex = /(\S+)(\s+)([A-Za-z0-9@\-_\.\\\/\:]+)(\s*)/
         let matched = regex.exec(value)
 
-        let glob = matched[1], loader = matched[3], options = json5.parse(value.slice(matched[0].length))
+        let glob = matched[1], loader = matched[3], options = json5.parse(value.slice(matched[0].length) || '{}')
         ret.rules = ret.rules || []
         ret.rules.push({ glob, loader, options })
         break        
       }
       case 'plugin': {
-        let regex = /([A-Za-z0-9@\-_\.\\\/\:]+)(\s+)/
+        let regex = /([A-Za-z0-9@\-_\.\\\/\:]+)(\s*)/
         let matched = regex.exec(value)
-        let m = matched[1], options = json5.parse(value.slice(matched[0].length))
+        let m = matched[1], options = json5.parse(value.slice(matched[0].length) || '{}')
         ret.plugins = ret.plugins || []
         ret.plugins.push({ module: m, options })
         console.warn('plugins don\'t work yet')
         break
       }
       case 'babel-presets': {
-        ret.babel = ret.babel || {}
-        ret.babel.presets = ret.babel.presets || []
-        ret.babel.presets.push(json5.parse(value))
+        ret.babelPresets = ret.babelPresets || []
+        ret.babelPresets.push(json5.parse(value))
         break
       }
       case 'babel-plugins': {
-        ret.babel = ret.babel || {}
-        ret.babel.plugins = ret.babel.plugins || []
-        ret.babel.plugins.push(json5.parse(value))
+        ret.babelPlugins = ret.babelPlugins || []
+        ret.babelPlugins.push(json5.parse(value))
         break
       }
       default: console.warn('not implemented', key, value)

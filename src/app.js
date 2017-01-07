@@ -222,13 +222,15 @@ function webpackify(filepath, options = {}) {
                 modules: false 
               } ], 
               require('babel-preset-stage-0'), 
-              require('babel-preset-react') 
+              require('babel-preset-react'),
+              ...options.babelPresets || []
             ],
             'plugins': [
               options.jsx ? [ require('babel-plugin-transform-react-jsx'),
                 { 'pragma': options.jsx } ] : undefined,
               require('babel-plugin-transform-decorators-legacy').default,
-              require('babel-plugin-transform-react-require').default
+              require('babel-plugin-transform-react-require').default,
+              ...options.babelPlugins || []
             ].filter(x => !!x),
             cacheDirectory: true
           }
