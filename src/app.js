@@ -33,7 +33,7 @@ db.find({ _id: 'recently' }, (err, docs) => {
   else console.log('db restarted')
 })
 
-// create .ratpack/node_modules if not exists 
+// todo - move this to main.js 
 import mkdirp from 'mkdirp'
 import touch from 'touch'
 import fs from 'fs'
@@ -94,18 +94,19 @@ class App extends React.Component {
     })
   }
   componentDidMount() {
-    this.refreshRecentList()
+    this.refreshRecentList()   
     this.interval = setInterval(() => {
-      if(this.state.running) {
-        this.setState({
-          tick: (this.state.tick + 1)%4 // (new Date()).getSeconds() % 4
-        })  
-      }
+      this.setState({
+        tick: (this.state.tick + 1) % 4 
+      })  
       
     }, 400)
+ 
   }
   componentWillUnmount() {
     clearInterval(this.interval)
+    this.interval = null    
+
     if(this.state.webpackServer) {
       this.state.webpackServer.close()  
     }    
@@ -124,7 +125,8 @@ class App extends React.Component {
       this.state.webpackServer.close()
     }
     let webpackCompiler = webpack({
-      entry: [ require.resolve('react-dev-utils/webpackHotDevClient.js'), filepath ],
+      devtool: 'cheap-module-source-map',
+      entry: [ require.resolve('react-dev-utils/webpackHotDevClient.js'), require.resolve('./polyfills'), filepath ],
       output: {
         path: path.join(__dirname, '../public'),
         filename: 'bundle.js'
@@ -151,16 +153,19 @@ class App extends React.Component {
           exclude: /node_modules/,
           loader: require.resolve('babel-loader'),
           options: {
-            'presets': [ [ require('babel-preset-env'), { 'targets': {
-              'browsers': [ 'last 2 versions', 'safari >= 7' ]
-            }, modules: false } ], require('babel-preset-stage-0'), require('babel-preset-react') ],
+            'presets': [ 
+              [ require('babel-preset-env'), { 
+                'targets': {
+                  'browsers': [ 'last 2 versions', 'safari >= 7' ]
+                }, 
+                modules: false 
+              } ], 
+              require('babel-preset-stage-0'), 
+              require('babel-preset-react') 
+            ],
             'plugins': [
-              // require('glamor/babel-hoist'),
               require('babel-plugin-transform-decorators-legacy').default,
               require('babel-plugin-transform-react-require').default
-              // [ require('babel-plugin-transform-react-jsx'), {
-              //   'pragma': 'Glamor.createElement' // default pragma is React.createElement
-              // } ]
             ],
             cacheDirectory: true
           }
@@ -269,7 +274,7 @@ class App extends React.Component {
       </div> 
       { this.state.recently.length > 0 && <div css={{ padding: 20 }}>
         <h1>previously...</h1>
-        {this.state.recently.map(x => <div onClick={() => this.loadFile(x.path)}>{x.path}</div>)}
+        {this.state.recently.map(x => <div key={x.path} onClick={() => this.loadFile(x.path)}>{x.path}</div>)}
         <h4 onClick={() => this.clearRecentList()}>clear list</h4>
       </div>}
       
