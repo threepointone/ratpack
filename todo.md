@@ -9,22 +9,24 @@
 - x - recently opened files
 - x - 'running on port...'
 - x - css, image, etc loaders 
-- ~ - special pragmas 
+- x - special pragmas 
+- x - proxy
+
 - ~ - packaged app  
-
-
-- updates for main app?
+- cli experience
 - dock experience
+- menubar experience
 - messaging on webpack error 
 - polyfills
 - preferences pane
 - configurations / presets 
-- menubar experience
+- updates for main app?
+
 - favicon
 - perf / stats / fps measurement helpers 
 - do a 'prod build' 
-- proxy?
 - node?
+- offline?
 - auto install?
 - linting?
 - any language?
@@ -33,12 +35,3 @@
 - flow / typescript / etc 
 - implicit React.render for default/App export?
 - performance hints 
-
-/*
-  @webpack 
-  @loader { test: /\.css$/, loader: 'css' }
-  @alias react preact-compat
-  @alias react-dom preact-compat
-  @modules ./my-modules
-  @root ./my-core-modules 
-*/

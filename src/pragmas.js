@@ -47,7 +47,14 @@ export default function parse(src) {
         console.warn(`${key} doesn\'t work yet`) //eslint-disable-line no-console
         break
       } 
-      
+
+      case 'reload': break
+      case 'port': {
+        if(!(value >= 0)) {
+          throw new Error(`port ${value} needs to be a valid number`)
+        }
+        break
+      }
       case 'proxy': // vvv
       case 'provide': // vvv      
       case 'alias': // vvv      
@@ -57,9 +64,7 @@ export default function parse(src) {
         console.warn('plugins don\'t work yet') //eslint-disable-line no-console
         break
       }
-      case 'babel': {
-        // ret.babelPresets = ret.babelPresets || []
-        // ret.babelPresets.push(json5.parse(value))
+      case 'babel': {        
         break
       }      
       default: console.warn('not implemented', key, value)  //eslint-disable-line no-console

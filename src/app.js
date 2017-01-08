@@ -207,7 +207,13 @@ class App extends React.Component {
 function webpackify(filepath, options = {}) {
   let webpackCompiler = webpack({
     devtool: options.devtool || 'cheap-module-source-map',
-    entry: [ require.resolve('react-dev-utils/webpackHotDevClient.js'), require.resolve('./polyfills'), filepath ],
+    entry: [ 
+      (options.reload !== false) ? 
+        require.resolve('react-dev-utils/webpackHotDevClient.js') : 
+        undefined, 
+      require.resolve('./polyfills'), 
+      filepath 
+    ].filter(x => !!x),
     output: {
       path: path.join(__dirname, '../public'),
       filename: 'bundle.js'
@@ -252,6 +258,13 @@ function webpackify(filepath, options = {}) {
                 { 'pragma': options.jsx } ] : undefined,
               require('babel-plugin-transform-decorators-legacy').default,
               require('babel-plugin-transform-react-require').default,
+              [ require.resolve('babel-plugin-transform-runtime'), {
+                helpers: false,
+                polyfill: false,
+                regenerator: true
+                // Resolve the Babel runtime relative to the config.
+                // moduleName: path.dirname(require.resolve('babel-runtime/package'))
+              } ],
               ...(options.babel || {}).plugins || []
             ].filter(x => !!x),
             cacheDirectory: true
@@ -319,7 +332,6 @@ function webpackify(filepath, options = {}) {
     historyApiFallback: true,
     compress: true,
     proxy: options.proxy || {},
-      // proxy 
       // setup()
       // staticOptions 
 
@@ -330,7 +342,7 @@ function webpackify(filepath, options = {}) {
     // this is to workaround some weird bug where webpack keeps the first loaded file 
     // also makes it look cool ha
   let h = hash(filepath, filepath.length)+ ''
-  let port = 3000 + parseInt(h.substr(h.length - 4), 10)
+  let port = options.port || (3000 + parseInt(h.substr(h.length - 4), 10))
   webpackServer.listen(port)
   openBrowser('http://localhost:' + port)
   return { webpackServer, webpackCompiler, port }
