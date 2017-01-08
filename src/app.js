@@ -6,12 +6,16 @@ import 'glamor/reset'
 import hash from 'glamor/lib/hash'
 import pragmas from './pragmas'
 
+
+
 import glob2regexp from 'glob-to-regexp'
 
 import openBrowser from 'react-dev-utils/openBrowser'
 
 const electron = require('electron')
 const app = electron.app || electron.remote.app
+
+
 
 
 import WebpackDevServer from 'webpack-dev-server'
@@ -53,6 +57,7 @@ mkdirp(path.join(app.getPath('home'), '.ratpack'), err => {
       description: 'these modules are available to all scripts launched by ratpack'
     }))  
   }
+  require('module').globalPaths.push(path.join(app.getPath('home'), '.ratpack/node_modules'))
   
 })
 
