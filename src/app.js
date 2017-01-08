@@ -6,16 +6,12 @@ import 'glamor/reset'
 import hash from 'glamor/lib/hash'
 import pragmas from './pragmas'
 
-
-
 import glob2regexp from 'glob-to-regexp'
 
 import openBrowser from 'react-dev-utils/openBrowser'
 
 const electron = require('electron')
 const app = electron.app || electron.remote.app
-
-
 
 
 import WebpackDevServer from 'webpack-dev-server'
@@ -57,6 +53,7 @@ mkdirp(path.join(app.getPath('home'), '.ratpack'), err => {
       description: 'these modules are available to all scripts launched by ratpack'
     }))  
   }
+  // among other things, this makes loaders defined in pragmas to work 
   require('module').globalPaths.push(path.join(app.getPath('home'), '.ratpack/node_modules'))
   
 })
@@ -116,9 +113,14 @@ class App extends React.Component {
 
     if(this.state.webpackServer) {
       this.state.webpackServer.close()  
-    }    
+    }   
+    if(this.watcher) {
+      this.watcher.close()
+      this.watcher = null
+    } 
   }
   loadFile(filepath) {
+
     db.update({ _id: 'recently' }, { _id: 'recently', files: [ { path: filepath }, ...this.state.recently.filter(x => x.path !== filepath) ].slice(0, 10) }, {}, err => {
       if(err) {
         this.setState({
@@ -128,22 +130,38 @@ class App extends React.Component {
       } 
       this.refreshRecentList()           
     })
+    if(this.watcher) {
+      this.watcher.close()
+      this.watcher = null
+    }
+    
     if(this.state.webpackServer) {
       this.state.webpackServer.close()
     }
 
-    // simultaneously start watching the entry file 
-    // if any of the pragmas change, redo this shindig 
+    
     fs.readFile(filepath, 'utf8', (err, src) => {      
+      if(err) throw err
       let options = pragmas(src)
       this.setState({ ...webpackify(filepath, options), filepath, running: true, pragmas: options })
-      // fs.watch(filepath, e => {
-      //   if(e === 'rename') {
-      //     // ???
-      //     return
-      //   }
 
-      // })
+      // simultaneously start watching the entry file 
+      this.watcher = fs.watch(filepath, e => {
+        if(e === 'rename') {
+          // ???
+          return          
+        }
+        
+        // if any of the pragmas change, redo this shindig 
+        fs.readFile(filepath, 'utf8', (err, src) => {
+          let options = pragmas(src)
+          if(JSON.stringify(options) !== JSON.stringify(this.state.pragmas)) {
+            this.loadFile(filepath)
+          }
+          // todo - prevent double read 
+        })
+
+      })
     })    
     
   }
@@ -187,7 +205,6 @@ class App extends React.Component {
 }
 
 function webpackify(filepath, options = {}) {
-  console.log(options)
   let webpackCompiler = webpack({
     devtool: options.devtool || 'cheap-module-source-map',
     entry: [ require.resolve('react-dev-utils/webpackHotDevClient.js'), require.resolve('./polyfills'), filepath ],

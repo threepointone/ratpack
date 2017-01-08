@@ -9,6 +9,7 @@
 - x - recently opened files
 - x - 'running on port...'
 - x - css, image, etc loaders 
+- ~ - special pragmas 
 - ~ - packaged app  
 
 
@@ -17,9 +18,7 @@
 - messaging on webpack error 
 - polyfills
 - preferences pane
-- @public pragma 
 - configurations / presets 
-- @public, @babel, @webpack, @proxy pragma
 - menubar experience
 - favicon
 - perf / stats / fps measurement helpers 
