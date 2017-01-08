@@ -195,7 +195,7 @@ function webpackify(filepath, options = {}) {
     },
     module: {
       rules: [ 
-        ...(options.rules || []).map(({ loader, glob, options }) => ({ loader: require.resolve(loader), options, test: glob2regexp(glob) })), 
+        ...(options.rules || []).map(({ loader, files, options }) => ({ loader: require.resolve(loader), options, test: glob2regexp(files || '*') })), 
         {
           exclude: [
             /\.html$/,
@@ -223,14 +223,14 @@ function webpackify(filepath, options = {}) {
               } ], 
               require('babel-preset-stage-0'), 
               require('babel-preset-react'),
-              ...options.babelPresets || []
+              ...(options.babel || {}).presets || []
             ],
             'plugins': [
               options.jsx ? [ require('babel-plugin-transform-react-jsx'),
                 { 'pragma': options.jsx } ] : undefined,
               require('babel-plugin-transform-decorators-legacy').default,
               require('babel-plugin-transform-react-require').default,
-              ...options.babelPlugins || []
+              ...(options.babel || {}).plugins || []
             ].filter(x => !!x),
             cacheDirectory: true
           }
@@ -265,7 +265,7 @@ function webpackify(filepath, options = {}) {
     plugins: [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-        ...options.define || {}
+        ...Object.keys(options.define || {}).reduce((o, key) => (o[key] = JSON.stringify(options.define[key]), o), {})
       }),
       new webpack.ProvidePlugin(options.provide || {}),
       new webpack.LoaderOptionsPlugin({

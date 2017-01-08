@@ -25,6 +25,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",
+    "cowsay-loader": "^1.0.1",
     "create-react-app": "^1.0.2",
     "css-loader": "^0.26.1",
     "electron": "^1.4.13",
