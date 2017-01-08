@@ -87,3 +87,12 @@ feature wishlist
 - multiple languages; flow, reason, node, whatevs 
 - eject config, for carrying on a 'real' project
 - a smaller package
+
+
+project status
+---
+
+This is stil *very* early work, with a large number of todos tog et through before it's 'production ready'. 
+That said, this is already pretty useful. If you'd like to try it out, either try out the 
+prototype mac release, or clone this repo and run `npm run && npm run package-app` to generate the binary for 
+your computer. Have fun!
