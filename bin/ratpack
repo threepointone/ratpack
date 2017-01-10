@@ -1,28 +1,35 @@
 #!/usr/bin/env node
+
 let opn = require('opn')
 let spawn = require('child_process').spawn
 let fs = require('fs')
 let path = require('path')
-let appdir = fs.readdirSync(path.join(__dirname, '../out'))[0] 
+let appdir = fs.readdirSync(path.join(__dirname, '../out')).filter(x => /^ratpack\-/.test(x))[0] 
 let argv = require('minimist')(process.argv.slice(1))
 if(argv.app) {
   // ratpack --app  
   // opens directory holding the app
-  opn(path.join(__dirname, `../out/${appdir}`))
+  opn(path.join(__dirname, `../out/${appdir}`), { wait: false }).then(
+    () => process.exit(0), 
+    err => console.error(err)) // eslint-disable-line no-console
 }
 else {
   // ratpack
-  // ratpack x.js 
+  // ratpack path/to/script.js 
   // this should open a new app instance, not hold a process in terminal. 
   let binpath = path.join(__dirname, `../out/${appdir}/ratpack.app/Contents/MacOS/ratpack`)
 
-  let script = argv._[1]
-  if(script) {
-    spawn(binpath, [ path.join(process.cwd(), script) ], { stdio: 'inherit' })
-  }
-  else {
-    spawn(binpath, [], { stdio: 'inherit' })
-  }  
+  let script = argv._[1], 
+    opts = argv.dev ? { stdio: 'inherit' } : { detached: true }, 
+    args = script ? 
+      [ binpath, [ path.join(process.cwd(), script) ], opts ]:
+      [ binpath, [], opts ],
+    child = spawn(...args)
+  
+  if(!argv.dev) {
+    child.unref()
+    process.exit(0)
+  } 
 }
 
 // that's it. no other apis planned for now.

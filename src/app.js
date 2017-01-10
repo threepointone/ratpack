@@ -28,11 +28,11 @@ let db = new DataStore({
 db.find({ _id: 'recently' }, (err, docs) => {
   if(docs.length === 0) {
     db.insert({ _id: 'recently', files: [] }, err => {
-      if(err) return console.error(err)
-      console.log('db initialized')
+      if(err) return console.error(err) //eslint-disable-line no-console
+      console.log('db initialized') //eslint-disable-line no-console
     })
   }
-  else console.log('db restarted')
+  else console.log('db restarted')  //eslint-disable-line no-console
 })
 
 // todo - move this to main.js 
@@ -103,10 +103,8 @@ class App extends React.Component {
     this.refreshRecentList(() => {
       if(window.location.search) {
         let filepath = qs.parse(window.location.search.slice(1)).startsWith
-        this.loadFile(filepath)
+        filepath && this.loadFile(filepath)
       }
-      
-      // alert(window.location.href)
     })   
     this.interval = setInterval(() => {
       this.setState({
@@ -214,9 +212,9 @@ class App extends React.Component {
 
 function webpackify(filepath, options = {}) {
   let webpackCompiler = webpack({
-    devtool: options.devtool || 'cheap-module-source-map',
+    devtool: options.production ? false : (options.devtool || 'cheap-module-source-map'),
     entry: [ 
-      (options.reload !== false) ? 
+      ((options.reload !== false) || (options.production !== true) ) ? 
         require.resolve('react-dev-utils/webpackHotDevClient.js') : 
         undefined, 
       require.resolve('./polyfills'), 
@@ -309,7 +307,7 @@ function webpackify(filepath, options = {}) {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        'process.env.NODE_ENV': JSON.stringify((options.production && 'production') || process.env.NODE_ENV || 'development'),
         ...Object.keys(options.define || {}).reduce((o, key) => (o[key] = JSON.stringify(options.define[key]), o), {})
       }),
       new webpack.ProvidePlugin(options.provide || {}),
@@ -338,7 +336,7 @@ function webpackify(filepath, options = {}) {
     }      
   })
   let webpackServer = new WebpackDevServer(webpackCompiler, {
-    contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(__dirname, '../public') ].filter(x => !!x),
+    contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ].filter(x => !!x),
     historyApiFallback: true,
     compress: true,
     proxy: options.proxy || {},
