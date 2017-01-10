@@ -17,6 +17,7 @@ require('react-dom').render(<div>look, preact!</div>, window.root)
 ```
 (assuming preact-compat is available locally or in `.ratpack/node_modules`)
 
+
 Here's a full list of working pragmas
 
 - `devtool: 'source-map'` [(ref.)](https://webpack.js.org/configuration/devtool/#devtool)
@@ -47,6 +48,7 @@ Here's a full list of working pragmas
     plugins: ['./some/path', ... ]
   }
   ```
+
 
 
 These don't 'work' yet, but could/will in the future
