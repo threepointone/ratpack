@@ -27,6 +27,7 @@ Here's a full list of working pragmas
 - `proxy: { '/api': 'http://localhost:3000' }` [(ref.)](https://webpack.js.org/configuration/dev-server/#devserver-proxy)
 - `provide: { 'Glamor': 'glamor/react' }` [(ref.)](https://webpack.js.org/guides/shimming/#provide-plugin)
 - `alias`
+  
   ```
   alias: {
     react: 'preact-compat',
@@ -36,8 +37,10 @@ Here's a full list of working pragmas
   [(ref.)](https://webpack.js.org/configuration/resolve/#resolve-alias)
 - `define: { 'process.env.NODE_ENV': 'test' }` [(ref.)](https://webpack.js.org/plugins/define-plugin/)
 - `rules: [ { files: '*.vue', loader: 'vue-loader', options: { some: 'options' } } , ...]` 
+  
   nb: `files` is a glob, which gets converted to a regex for webpack's `test` prop 
 - babel presets and plugins
+  
   ```
   babel: {
     presets: ['vue', [ 'a11y', {...} ],
