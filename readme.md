@@ -13,8 +13,9 @@ quickstart
 - write a javascript file, save it somewhere. maybe it looks like this - 
   
   ```jsx
-    import { render } from 'react-dom'
-    render(<div>hello world</div>, document.getElementById('root'))
+    require('react-dom').render(
+      <div>hello world</div>, 
+      document.getElementById('root'))
   ```
 - drag it on to the app.
 - *magic*
@@ -27,7 +28,7 @@ ratpack gets rid of all the starting boilerplate for building and running the so
 'modern' javascript stack, letting you immediately jump into the core of your problem. 
 
 - steals a bunch of code/tools from create-react-app for live reloading, in-browser error messaging, 
-file loaders for css, images, etc (todo - load custom loaders with js pragmas)
+file loaders for css, images, etc, and you can load your own loaders with js pragmas
 - comes with liberal babel defaults, including future facing extensions (and decorators!). You can also use a 
 local `.babelrc` file (experimental).
 - preloads libraries like react, react-router@4, and glamor. It'll also use modules from 
@@ -88,11 +89,23 @@ feature wishlist
 - eject config, for carrying on a 'real' project
 - a smaller package
 
+the shoulders of giants
+---
+
+this couldn't exist without the work of thousands of people in the OSS world. Some projects specifically -
+
+- nwb, create-react-app, and the whole family of CLI apps to bootstrap, run and build your javascript apps
+- webpack2, the giant swiss army knife of javascript bundlers 
+- babel, for all your javascript transformation needs
+- electron, giving a truly desirable target for building javascript tooling 
+- and of course, react and its entire ecosystem.
+
 
 project status
 ---
 
-This is stil *very* early work, with a large number of todos tog et through before it's 'production ready'. 
+This is stil *very* early work, with a large number of todos to get through before it's 'production ready'. 
 That said, this is already pretty useful. If you'd like to try it out, either try out the 
 prototype mac release, or clone this repo and run `npm run && npm run package-app` to generate the binary for 
 your computer. Have fun!
+

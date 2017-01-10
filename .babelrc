@@ -6,7 +6,7 @@
   "plugins": [
     "glamor/babel-hoist",
     ["transform-react-jsx", {
-      "pragma": "require('glamor/react').createElement" // default pragma is React.createElement
+      "pragma": "require('glamor/react').createElement"
     }]
   ],
   "ignore": [

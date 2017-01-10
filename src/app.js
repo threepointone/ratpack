@@ -1,3 +1,4 @@
+import qs from 'querystring'
 import autoprefixer from 'autoprefixer'
 import React from 'react'
 import path from 'path'
@@ -5,9 +6,7 @@ import { render } from 'react-dom'
 import 'glamor/reset'
 import hash from 'glamor/lib/hash'
 import pragmas from './pragmas'
-
 import glob2regexp from 'glob-to-regexp'
-
 import openBrowser from 'react-dev-utils/openBrowser'
 
 const electron = require('electron')
@@ -85,7 +84,7 @@ class App extends React.Component {
     port: 0,
     running: false
   }
-  refreshRecentList() {
+  refreshRecentList(cb) {
     db.find({ _id: 'recently' }, (err, docs) => {
       if(err) {
         this.setState({
@@ -96,10 +95,19 @@ class App extends React.Component {
       this.setState({
         recently: docs[0].files
       })
+      if(cb) cb()
     })
   }
   componentDidMount() {
-    this.refreshRecentList()   
+
+    this.refreshRecentList(() => {
+      if(window.location.search) {
+        let filepath = qs.parse(window.location.search.slice(1)).startsWith
+        this.loadFile(filepath)
+      }
+      
+      // alert(window.location.href)
+    })   
     this.interval = setInterval(() => {
       this.setState({
         tick: (this.state.tick + 1) % 4 
@@ -216,6 +224,7 @@ function webpackify(filepath, options = {}) {
     ].filter(x => !!x),
     output: {
       path: path.join(__dirname, '../public'),
+      pathinfo: true,
       filename: 'bundle.js'
     },
     performance: {
@@ -295,6 +304,7 @@ function webpackify(filepath, options = {}) {
     },
     resolve: {
       alias: options.alias || {},
+      extensions: [ '.js', '.json', '.jsx' ],
       modules: [ 'node_modules', path.join(app.getPath('home'), '.ratpack/node_modules'),  path.join(__dirname, '../node_modules') ]
     },
     plugins: [
@@ -328,7 +338,7 @@ function webpackify(filepath, options = {}) {
     }      
   })
   let webpackServer = new WebpackDevServer(webpackCompiler, {
-    contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ].filter(x => !!x),
+    contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(__dirname, '../public') ].filter(x => !!x),
     historyApiFallback: true,
     compress: true,
     proxy: options.proxy || {},

@@ -1,6 +1,11 @@
 // import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 
 import { app, BrowserWindow }  from 'electron'
+import path from 'path'
+
+let isProd = path.basename(process.argv[0]) === 'ratpack'
+
+let startsWith = require('minimist')(process.argv.slice(1))._[ isProd ? 0 : 1]
 
 
 // Module to control application file.
@@ -21,10 +26,10 @@ function createWindow() {
   mainWindow = new BrowserWindow({ width: 800, height: 600 })
 
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html`)
+  mainWindow.loadURL(`file://${__dirname}/index.html${startsWith ? `?startsWith=${encodeURIComponent(startsWith)}` : ''}` )
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
