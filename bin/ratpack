@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 // todo - windows
-
 let opn = require('opn')
 let spawn = require('child_process').spawn
 let fs = require('fs')
@@ -18,6 +17,7 @@ else {
   // ratpack
   // ratpack path/to/script.js 
   // this should open a new app instance, not hold a process in terminal. 
+  // todo - windows, linux
   let binpath = path.join(__dirname, `../out/${appdir}/ratpack.app/Contents/MacOS/ratpack`)
 
   let script = argv._[1], 

@@ -1,3 +1,4 @@
+
 import qs from 'querystring'
 import autoprefixer from 'autoprefixer'
 import React from 'react'
@@ -8,6 +9,7 @@ import hash from 'glamor/lib/hash'
 import pragmas from './pragmas'
 import glob2regexp from 'glob-to-regexp'
 import openBrowser from 'react-dev-utils/openBrowser'
+import OfflinePlugin from 'offline-plugin'
 
 const electron = require('electron')
 const app = electron.app || electron.remote.app
@@ -40,6 +42,7 @@ import mkdirp from 'mkdirp'
 import touch from 'touch'
 import fs from 'fs'
 
+// todo - windows
 mkdirp(path.join(app.getPath('home'), '.ratpack'), err => {
   if(err) {
     throw err
@@ -218,6 +221,7 @@ function webpackify(filepath, options = {}) {
         require.resolve('react-dev-utils/webpackHotDevClient.js') : 
         undefined, 
       require.resolve('./polyfills'), 
+      options.offline ? require.resolve('./offline-plugin-runtime.js') : undefined,
       filepath 
     ].filter(x => !!x),
     output: {
@@ -317,6 +321,7 @@ function webpackify(filepath, options = {}) {
         'process.env.NODE_ENV': JSON.stringify((options.production && 'production') || process.env.NODE_ENV || 'development'),
         ...Object.keys(options.define || {}).reduce((o, key) => (o[key] = JSON.stringify(options.define[key]), o), {})
       }),
+      options.offline ? new OfflinePlugin(options.offline === true ? {} : options.offline) : undefined,
       new webpack.ProvidePlugin(options.provide || {}),
       new webpack.LoaderOptionsPlugin({
         test: /\.css$/,
@@ -334,25 +339,24 @@ function webpackify(filepath, options = {}) {
           ]
         }
       })
-    ],
+    ].filter(x => !!x),
     stats: 'errors-only',
     node: {
       fs: 'empty',
       net: 'empty',
       tls: 'empty'
-    }      
+    }
   })
   let webpackServer = new WebpackDevServer(webpackCompiler, {
     contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ].filter(x => !!x),
     historyApiFallback: true,
     compress: true,
     proxy: options.proxy || {},
-      // setup()
-      // staticOptions 
+        // setup()
+        // staticOptions 
 
     quiet: true,      
-    stats: { colors: false }
-
+    stats: { colors: false }  
   })
     // this is to workaround some weird bug where webpack keeps the first loaded file 
     // also makes it look cool ha

@@ -51,6 +51,7 @@
     "mkdirp": "^0.5.1",
     "nedb": "^1.8.0",
     "object-assign": "^4.1.0",
+    "offline-plugin": "^4.5.4",
     "opn": "^4.0.2",
     "postcss-loader": "^1.2.1",
     "promise": "^7.1.1",
