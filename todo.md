@@ -12,6 +12,7 @@
 - x - special pragmas 
 - x - proxy
 - x - cli experience
+- x - favicon
 
 - dock experience
 - menubar experience
@@ -22,7 +23,7 @@
 - ~ - packaged app  
 - updates for main app?
 
-- favicon
+
 - perf / stats / fps measurement helpers 
 - do a 'prod build' 
 - node?

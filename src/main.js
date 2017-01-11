@@ -3,7 +3,7 @@
 import { app, BrowserWindow }  from 'electron'
 import path from 'path'
 
-let isProd = path.basename(process.argv[0]) === 'ratpack'
+let isProd = path.basename(process.argv[0]).indexOf('ratpack') === 0
 
 let startsWith = require('minimist')(process.argv.slice(1))._[ isProd ? 0 : 1]
 
@@ -23,7 +23,7 @@ function createWindow() {
   //   .then((name) => console.log(`Added Extension:  ${name}`))
   //   .catch((err) => console.log('An error occurred: ', err))
 
-  mainWindow = new BrowserWindow({ width: 800, height: 600 })
+  mainWindow = new BrowserWindow({ width: 800, height: 600, icon: path.join(__dirname, '../resources/icon.png') })
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html${startsWith ? `?startsWith=${encodeURIComponent(startsWith)}` : ''}` )
@@ -55,7 +55,8 @@ app.on('window-all-closed', function () {
 })
 
 app.on('open-file', e => {
-  console.log(e)
+  // console.log(e)
+  // mainWindow.postMessage('open-file', e)
 })
 
 app.on('activate', function () {

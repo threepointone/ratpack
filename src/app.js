@@ -232,6 +232,12 @@ function webpackify(filepath, options = {}) {
       rules: [ 
         ...(options.rules || []).map(({ loader, files, options }) => ({ loader: require.resolve(loader), options, test: glob2regexp(files || '*') })), 
         {
+          enforce: 'pre',
+          test: /\.(js|jsx)$/,
+          loader: require.resolve('eslint-loader'),
+          exclude: /node_modules/
+        }, 
+        {
           exclude: [
             /\.html$/,
             /\.(js|jsx)$/,
@@ -244,7 +250,8 @@ function webpackify(filepath, options = {}) {
             limit: 10000,
             name: 'static/media/[name].[hash:8].[ext]'
           }
-        }, {
+        }, 
+        {
           test: /\.js$/,
           exclude: /node_modules/,
           loader: require.resolve('babel-loader'),

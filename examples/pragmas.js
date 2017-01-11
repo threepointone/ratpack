@@ -14,13 +14,10 @@
 }
 */
 
+/* eslint semi: 0 */
 
 import { render } from 'react-dom'
-render(<div>456</div>, window.root)
+render(<div>456</div>, window.root);
 
 fetch('/yahoo')
  
-  // alias: {
-  //   'react': 'preact-compat',
-  //   'react-dom': 'preact-compat'
-  // },
