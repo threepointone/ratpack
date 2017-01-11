@@ -16,6 +16,7 @@
 - x - linting (setup helper?)
 - x - open with / dbl click experiencec
 - x - dock experience
+- x - stats 
 
 - menubar experience
 - messaging on webpack error 

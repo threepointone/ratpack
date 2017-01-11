@@ -52,10 +52,10 @@ export default function parse(src) {
         if((value !== true) && (value !== false)) {
           throw new Error(`@${key} ${value} needs to be true or false`)
         }
-        console.warn(`${key} doesn\'t work yet`) //eslint-disable-line no-console
+        console.warn(`${key} doesn't work yet`) //eslint-disable-line no-console
         break
       } 
-
+      case 'stats': 
       case 'reload': {
         if((value !== true) && (value !== false)) {
           throw new Error(`@${key} ${value} needs to be true or false`)

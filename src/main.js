@@ -3,7 +3,7 @@
 // app: control application file.
 // BrowserWindow: create native browser window.
 
-import { app, BrowserWindow, ipcMain }  from 'electron'
+import { app, BrowserWindow }  from 'electron'
 import path from 'path'
 
 let isProd = path.basename(process.argv[0]).indexOf('ratpack') === 0
@@ -22,7 +22,7 @@ app.on('open-file', (e, filepath) => {
     return 
   }    
 })
-
+ 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 
