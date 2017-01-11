@@ -1,21 +1,31 @@
 // import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 
-import { app, BrowserWindow }  from 'electron'
+// app: control application file.
+// BrowserWindow: create native browser window.
+
+import { app, BrowserWindow, ipcMain }  from 'electron'
 import path from 'path'
 
 let isProd = path.basename(process.argv[0]).indexOf('ratpack') === 0
 
 let startsWith = require('minimist')(process.argv.slice(1))._[ isProd ? 0 : 1]
+let startedOnce = false
+let mainWindow
 
-
-// Module to control application file.
-// const app = electron.app
-// // Module to create native browser window.
-// const BrowserWindow = electron.BrowserWindow
+app.on('open-file', (e, filepath) => {
+  if(!mainWindow ) {
+    startsWith = filepath
+    if(!startedOnce) {      
+      return
+    }    
+    createWindow()    
+    return 
+  }    
+})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+
 
 function createWindow() {
   // Create the browser window.
@@ -23,11 +33,14 @@ function createWindow() {
   //   .then((name) => console.log(`Added Extension:  ${name}`))
   //   .catch((err) => console.log('An error occurred: ', err))
 
-  mainWindow = new BrowserWindow({ width: 800, height: 600, icon: path.join(__dirname, '../resources/icon.png') })
-
+  mainWindow = new BrowserWindow({ width: 800, height: 600, icon: path.join(__dirname, '../resources/icon.png'), backgroundColor: '#f7df1e', show: false })
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+  })
+  startedOnce = true
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html${startsWith ? `?startsWith=${encodeURIComponent(startsWith)}` : ''}` )
-
+  startsWith = undefined
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
 
@@ -54,10 +67,6 @@ app.on('window-all-closed', function () {
   }
 })
 
-app.on('open-file', e => {
-  // console.log(e)
-  // mainWindow.postMessage('open-file', e)
-})
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the

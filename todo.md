@@ -14,8 +14,9 @@
 - x - cli experience
 - x - favicon
 - x - linting (setup helper?)
+- x - open with / dbl click experiencec
+- x - dock experience
 
-- dock experience
 - menubar experience
 - messaging on webpack error 
 - ~ - polyfills

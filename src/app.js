@@ -42,6 +42,7 @@ import mkdirp from 'mkdirp'
 import touch from 'touch'
 import fs from 'fs'
 
+
 // todo - windows
 mkdirp(path.join(app.getPath('home'), '.ratpack'), err => {
   if(err) {
@@ -87,6 +88,9 @@ class App extends React.Component {
     port: 0,
     running: false
   }
+  onOpenFile = (e, filepath) => {
+    this.loadFile(filepath)
+  }
   refreshRecentList(cb) {
     db.find({ _id: 'recently' }, (err, docs) => {
       if(err) {
@@ -102,7 +106,7 @@ class App extends React.Component {
     })
   }
   componentDidMount() {
-
+    app.on('open-file', this.onOpenFile)
     this.refreshRecentList(() => {
       if(window.location.search) {
         let filepath = qs.parse(window.location.search.slice(1)).startsWith
@@ -127,6 +131,31 @@ class App extends React.Component {
       this.watcher.close()
       this.watcher = null
     } 
+    app.removeEventListener('open-file', this.onOpenFile)
+  }
+  _loadFile(filepath){
+    fs.readFile(filepath, 'utf8', (err, src) => {      
+      if(err) throw err
+      let options = pragmas(src)
+      this.setState({ ...webpackify(filepath, options), filepath, running: true, pragmas: options })
+
+      // simultaneously start watching the entry file 
+      this.watcher = fs.watch(filepath, e => {
+        if(e === 'rename') {
+          // ???
+          return          
+        }        
+        // if any of the pragmas change, redo this shindig 
+        fs.readFile(filepath, 'utf8', (err, src) => {
+          let options = pragmas(src)
+          if(JSON.stringify(options) !== JSON.stringify(this.state.pragmas)) {
+            this.loadFile(filepath)
+          }
+          // todo - prevent double read 
+        })
+
+      })
+    })    
   }
   loadFile(filepath) {
 
@@ -146,33 +175,14 @@ class App extends React.Component {
     
     if(this.state.webpackServer) {
       this.state.webpackServer.close()
+      setTimeout(() => {
+        this._loadFile(filepath)
+      }, 500)      
     }
-
-    
-    fs.readFile(filepath, 'utf8', (err, src) => {      
-      if(err) throw err
-      let options = pragmas(src)
-      this.setState({ ...webpackify(filepath, options), filepath, running: true, pragmas: options })
-
-      // simultaneously start watching the entry file 
-      this.watcher = fs.watch(filepath, e => {
-        if(e === 'rename') {
-          // ???
-          return          
-        }
-        
-        // if any of the pragmas change, redo this shindig 
-        fs.readFile(filepath, 'utf8', (err, src) => {
-          let options = pragmas(src)
-          if(JSON.stringify(options) !== JSON.stringify(this.state.pragmas)) {
-            this.loadFile(filepath)
-          }
-          // todo - prevent double read 
-        })
-
-      })
-    })    
-    
+    else {
+      this._loadFile(filepath)
+    }
+            
   }
   onDrop = e => {
     e.preventDefault()
@@ -214,6 +224,7 @@ class App extends React.Component {
 }
 
 function webpackify(filepath, options = {}) {
+  
   let webpackCompiler = webpack({
     devtool: options.production ? false : (options.devtool || 'cheap-module-source-map'),
     entry: [ 
@@ -239,7 +250,10 @@ function webpackify(filepath, options = {}) {
           enforce: 'pre',
           test: /\.(js|jsx)$/,
           loader: require.resolve('eslint-loader'),
-          exclude: /node_modules/
+          exclude: /node_modules/,
+          options: {
+            configFile: path.join(__dirname, '../resources/.eslintrc')
+          }
         }, 
         {
           exclude: [
@@ -268,14 +282,10 @@ function webpackify(filepath, options = {}) {
                 modules: false 
               } ], 
               require('babel-preset-stage-0'), 
-              require('babel-preset-react'),
+              require('babel-preset-react'),              
               ...(options.babel || {}).presets || []
             ],
             'plugins': [
-              options.jsx ? [ require('babel-plugin-transform-react-jsx'),
-                { 'pragma': options.jsx } ] : undefined,
-              require('babel-plugin-transform-decorators-legacy').default,
-              require('babel-plugin-transform-react-require').default,
               [ require.resolve('babel-plugin-transform-runtime'), {
                 helpers: false,
                 polyfill: false,
@@ -283,9 +293,14 @@ function webpackify(filepath, options = {}) {
                 // Resolve the Babel runtime relative to the config.
                 // moduleName: path.dirname(require.resolve('babel-runtime/package'))
               } ],
+              options.jsx ? [ require('babel-plugin-transform-react-jsx'),
+                { 'pragma': options.jsx } ] : undefined,
+              require('babel-plugin-transform-decorators-legacy').default,
+              require('babel-plugin-transform-react-require').default,
+              
               ...(options.babel || {}).plugins || []
             ].filter(x => !!x),
-            cacheDirectory: true
+            cacheDirectory: false
           }
         }, 
         {
@@ -299,10 +314,11 @@ function webpackify(filepath, options = {}) {
             require.resolve('postcss-loader')  // options in the plugins section below             
           ]
         }, 
-        {
-          test: /\.json$/,
-          loader: require.resolve('json-loader')
-        }, {
+        // {
+        //   test: /\.json$/,
+        //   loader: require.resolve('json-loader')
+        // },
+         {
           test: /\.svg$/,
           loader: require.resolve('file-loader'),
           query: {
@@ -319,7 +335,7 @@ function webpackify(filepath, options = {}) {
     plugins: [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify((options.production && 'production') || process.env.NODE_ENV || 'development'),
-        ...Object.keys(options.define || {}).reduce((o, key) => (o[key] = JSON.stringify(options.define[key]), o), {})
+        ...Object.keys(options.define || {}).reduce((o, key) => ({ ...o, [key]: JSON.stringify(options.define[key]) }), {})
       }),
       options.offline ? new OfflinePlugin(options.offline === true ? {} : options.offline) : undefined,
       new webpack.ProvidePlugin(options.provide || {}),
@@ -347,6 +363,7 @@ function webpackify(filepath, options = {}) {
       tls: 'empty'
     }
   })
+  
   let webpackServer = new WebpackDevServer(webpackCompiler, {
     contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ].filter(x => !!x),
     historyApiFallback: true,

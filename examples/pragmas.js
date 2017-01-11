@@ -16,7 +16,7 @@
 
 /* eslint semi: 0 */
 
-import { render } from 'react-dom'
+import { render } from 'react-dom';
 render(<div>456</div>, window.root);
 
 fetch('/yahoo')

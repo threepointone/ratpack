@@ -15,12 +15,12 @@ packager({
   'app-version': require('../package').version,
   asar: false,
   'build-version': require('../package').version,
-  icon: path.join(__dirname, '../resources/', process.platform === 'darwin' ? 'ratpack-logo.icns': 'ratpack-logo.ico'),
+  icon: path.join(__dirname, '../resources/', process.platform === 'darwin' ? 'icon.icns': 'icon.ico'),
   'out': path.join(__dirname, '../out'),
   overwrite: true,
   'app-bundle-id': 'com.threepointone.ratpack',
   'app-category-type': 'public.app-category.developer-tools',
-  // 'extend-info': todo,
+  'extend-info': path.join(__dirname, '../resources/Info.plist'),
   'helper-bundle-id': 'com.threepointone.ratpack.helper',
   // protocol: 'ratpack'
   // 'protocol-name': []

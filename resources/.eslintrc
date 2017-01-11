@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "eslint-config-react-app"
+  ],
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "react/jsx-uses-vars": "error",
+    "react/jsx-uses-react": "error",
+    "react/react-in-jsx-scope": 0,
+    "jsx-quotes": 0
+  }
+}
