@@ -23,6 +23,7 @@ Here's a full list of working pragmas
 - `devtool: 'source-map'` [(ref.)](https://webpack.js.org/configuration/devtool/#devtool)
 - `reload: false` toggle live reloads, defaults to `true`
 - `port: 3999` 
+- `stats: true` shows a [stats.js](https://github.com/mrdoob/stats.js/) fps window
 - `production: true` particularly good for running benchmarks, etc
 - `public: './my/public/folder'` [(ref.)](https://webpack.js.org/configuration/dev-server/#devserver-contentbase)
 - `jsx: 'Inferno.createElement'` This is different from babel's `@jsx` pragma, in that it will apply to *all* js files, not just the one 

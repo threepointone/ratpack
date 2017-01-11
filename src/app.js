@@ -231,6 +231,7 @@ function webpackify(filepath, options = {}) {
       ((options.reload !== false) || (options.production !== true) ) ? 
         require.resolve('react-dev-utils/webpackHotDevClient.js') : 
         undefined, 
+      options.stats ? require.resolve('./stats.js') : undefined,
       require.resolve('./polyfills'), 
       options.offline ? require.resolve('./offline-plugin-runtime.js') : undefined,
       filepath 
