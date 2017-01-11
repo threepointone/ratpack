@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// todo - windows
 
 let opn = require('opn')
 let spawn = require('child_process').spawn

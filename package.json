@@ -6,8 +6,9 @@
   "main": "bootstrap.js",
   "scripts": {
     "start": "electron .",
-    "package-app": "rm -rf out && electron-packager . --out out",
-    "build": "babel src -d app",
+    "package-app": "node scripts/build.js",
+    "build": "babel src -d lib",
+    "icons": "png2icns resources/icon.png -o resources/icon.icns && png-to-ico resources/icon.png > resources/icon.ico && png-to-ico resources/favicon.png > resources/favicon.ico",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sunil Pai <threepointone@gmail.com>",
@@ -32,8 +33,13 @@
     "css-loader": "^0.26.1",
     "electron": "^1.4.13",
     "electron-devtools-installer": "^2.0.1",
+    "electron-packager": "^8.4.0",
     "eslint": "^3.13.1",
     "eslint-config-rackt": "^1.1.1",
+    "eslint-config-react-app": "^0.5.0",
+    "eslint-plugin-flowtype": "^2.29.2",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
     "eslint-plugin-react": "^6.9.0",
     "file-loader": "^0.9.0",
     "glamor": "^2.20.20",
@@ -54,7 +60,7 @@
     "style-loader": "^0.13.1",
     "touch": "^1.0.0",
     "url-loader": "^0.5.7",
-    "webpack": "2.2.0-rc.2",
+    "webpack": "2.2.0-rc.3",
     "webpack-dev-server": "2.2.0-rc.0",
     "whatwg-fetch": "^2.0.1"
   },
@@ -72,6 +78,7 @@
     }
   },
   "devDependencies": {
-    "electron-packager": "^8.4.0"
+    "png-to-ico": "^1.0.2",
+    "png2icns": "^0.0.1"
   }
 }

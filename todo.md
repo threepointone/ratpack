@@ -11,15 +11,15 @@
 - x - css, image, etc loaders 
 - x - special pragmas 
 - x - proxy
+- x - cli experience
 
-- ~ - packaged app  
-- cli experience
 - dock experience
 - menubar experience
 - messaging on webpack error 
-- polyfills
+- ~ - polyfills
 - preferences pane
 - configurations / presets 
+- ~ - packaged app  
 - updates for main app?
 
 - favicon

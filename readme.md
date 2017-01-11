@@ -2,6 +2,10 @@ ratpack
 ---
 
 [work in progress]
+```
+npm install ratpack -g
+```
+or [download the latest release](https://github.com/threepointone/ratpack/releases)
 
 ![ratpack](https://i.imgur.com/eEtI35w.png)
 
@@ -10,14 +14,14 @@ ratpack is for beginners, tinkerers, ents, cylons.
 quickstart
 ---
 
-- write a javascript file, save it somewhere. maybe it looks like this - 
+- write a javascript file, say `script.js`, and save it somewhere. maybe it looks like this - 
   
   ```jsx
     require('react-dom').render(
       <div>hello world</div>, 
       document.getElementById('root'))
   ```
-- drag it on to the app.
+- drag it on to the app, or run `ratpack script.js`
 - *magic*
 
 
@@ -34,9 +38,9 @@ local `.babelrc` file (experimental).
 - preloads libraries like react, react-router@4, and glamor. It'll also use modules from 
 your own `node_modules` folder, *and* you can add your own 'globally' by installing with npm/yarn to `~/.ratpack`
 - use a local `public` folder to serve static assets that can't be imported (todo - and / or to serve a custom `index.html`)
+- use [pragmas](https://github.com/threepointone/ratpack/blob/master/docs/pragmas.md) at the top of your file to configure ratpack
 - todo - will autoupdate itself whenever I make a 'release', so you're using the latest versions of presets and packaged libs almost as soon they're out
 - todo - a preferences pane to edit 'global' settings; toggle presets, add libs, etc
-
 
 
 
