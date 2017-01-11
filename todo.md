@@ -13,6 +13,7 @@
 - x - proxy
 - x - cli experience
 - x - favicon
+- x - linting (setup helper?)
 
 - dock experience
 - menubar experience
@@ -29,7 +30,6 @@
 - node?
 - offline?
 - auto install?
-- linting?
 - any language?
 - windows?
 - redbox?
