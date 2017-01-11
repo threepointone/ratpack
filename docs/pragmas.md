@@ -23,6 +23,7 @@ Here's a full list of working pragmas
 - `devtool: 'source-map'` [(ref.)](https://webpack.js.org/configuration/devtool/#devtool)
 - `reload: false` toggle live reloads, defaults to `true`
 - `port: 3999` 
+- `production: true` particularly good for running benchmarks, etc
 - `public: './my/public/folder'` [(ref.)](https://webpack.js.org/configuration/dev-server/#devserver-contentbase)
 - `jsx: 'Inferno.createElement'` This is different from babel's `@jsx` pragma, in that it will apply to *all* js files, not just the one 
 - `proxy: { '/api': 'http://localhost:3000' }` [(ref.)](https://webpack.js.org/configuration/dev-server/#devserver-proxy)
@@ -55,10 +56,10 @@ These don't 'work' yet, but could/will in the future
 
 - `target: 'node'` [(ref.)](https://webpack.js.org/configuration/target/#target)
 - `hot: true` [(ref.)](https://webpack.js.org/concepts/hot-module-replacement/)
-- `offline: <options>` [(ref.)](https://github.com/NekR/offline-plugin)
+- `offline: true || <options>` [(ref.)](https://github.com/NekR/offline-plugin)
 - `autoinstall: true` [(ref.)](https://github.com/ericclemmons/npm-install-webpack-plugin)
 - `plugins: [ {<module> <options>}, ... ]`
-- `production: true`
+
 
 
 thoughts/questions/ideas?
