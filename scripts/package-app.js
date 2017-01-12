@@ -11,7 +11,7 @@ packager({
   // afterExtract: [ function () {
   //   console.log('afterExtract', ...arguments)
   // } ],
-  prune: false,
+  prune: false, // todo - fix
   // mac 
   'app-copyright': 'copyright 2017 Sunil Pai',
   'app-version': require('../package').version,
