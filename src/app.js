@@ -331,6 +331,7 @@ function webpackify(filepath, options = {}) {
     resolve: {
       alias: options.alias || {},
       extensions: [ '.js', '.json', '.jsx' ],
+      // todo - windows
       modules: [ 'node_modules', path.join(app.getPath('home'), '.ratpack/node_modules'),  path.join(__dirname, '../node_modules') ]
     },
     plugins: [
@@ -366,6 +367,7 @@ function webpackify(filepath, options = {}) {
   })
   
   let webpackServer = new WebpackDevServer(webpackCompiler, {
+    // todo - windows
     contentBase: [ options.public ? path.join(path.dirname(filepath), options.public) : '', path.join(path.dirname(filepath), 'public'), path.join(__dirname, '../public') ].filter(x => !!x),
     historyApiFallback: true,
     compress: true,
