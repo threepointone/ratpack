@@ -1,6 +1,8 @@
 let packager = require('electron-packager')
 let path = require('path')
 
+process.chdir(path.join(__dirname, '../'))
+
 packager({
   dir: path.join(__dirname, '../'),
   // afterCopy: [ function () {
