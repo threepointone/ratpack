@@ -85,8 +85,5 @@
       "jsx-quotes": 0
     }
   },
-  "devDependencies": {
-    "png-to-ico": "^1.0.2",
-    "png2icns": "^0.0.1"
-  }
+  "devDependencies": {}
 }
