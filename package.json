@@ -1,6 +1,6 @@
 {
   "name": "ratpack",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "components for build systems",
   "productName": "ratpack",
   "main": "bootstrap.js",
