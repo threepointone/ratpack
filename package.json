@@ -12,7 +12,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "npm run package-app"
   },
-  "bin": "./bin/ratpack",
+  "bin": {
+    "ratpack": "./bin/ratpack"
+  },
   "author": "Sunil Pai <threepointone@gmail.com>",
   "license": "ISC",
   "dependencies": {
