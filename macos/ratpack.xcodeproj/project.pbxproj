@@ -20,7 +20,7 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		D473B0AC1E2B97E100A43B2D /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D473B0A41E2B97D900A43B2D /* libART.a */; };
 		D473B0AF1E2BA5CF00A43B2D /* ChildProcess.m in Sources */ = {isa = PBXBuildFile; fileRef = D473B0AE1E2BA5CF00A43B2D /* ChildProcess.m */; };
-		D473B0B11E2BC09200A43B2D /* node_onLoad.js in Resources */ = {isa = PBXBuildFile; fileRef = D473B0B01E2BC09200A43B2D /* node_onLoad.js */; };
+		D473B0B31E2BC3CC00A43B2D /* node_onLoad.js in Resources */ = {isa = PBXBuildFile; fileRef = D473B0B21E2BC3CC00A43B2D /* node_onLoad.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,7 +109,7 @@
 		D473B09F1E2B97D900A43B2D /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native-macos/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		D473B0AD1E2BA5CF00A43B2D /* ChildProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChildProcess.h; path = ratpack/ChildProcess.h; sourceTree = "<group>"; };
 		D473B0AE1E2BA5CF00A43B2D /* ChildProcess.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ChildProcess.m; path = ratpack/ChildProcess.m; sourceTree = "<group>"; };
-		D473B0B01E2BC09200A43B2D /* node_onLoad.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = node_onLoad.js; path = ../app/node_onLoad.js; sourceTree = "<group>"; };
+		D473B0B21E2BC3CC00A43B2D /* node_onLoad.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = node_onLoad.js; path = ../src/node_onLoad.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,7 +190,7 @@
 		13B07FAE1A68108700A75B9A /* ratpack */ = {
 			isa = PBXGroup;
 			children = (
-				D473B0B01E2BC09200A43B2D /* node_onLoad.js */,
+				D473B0B21E2BC3CC00A43B2D /* node_onLoad.js */,
 				D473B0AD1E2BA5CF00A43B2D /* ChildProcess.h */,
 				D473B0AE1E2BA5CF00A43B2D /* ChildProcess.m */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -449,7 +449,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				D473B0B11E2BC09200A43B2D /* node_onLoad.js in Resources */,
+				D473B0B31E2BC3CC00A43B2D /* node_onLoad.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
