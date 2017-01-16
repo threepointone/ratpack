@@ -11,9 +11,15 @@ import glob2regexp from 'glob-to-regexp'
 import openBrowser from 'react-dev-utils/openBrowser'
 import OfflinePlugin from 'offline-plugin'
 
+
+const log = require('electron-log')
 const electron = require('electron')
 const app = electron.app || electron.remote.app
 
+log.transports.file.level = 'info';
+log.transports.file.format = '{h}:{i}:{s}:{ms} {text}'
+log.transports.file.maxSize = 5 * 1024 * 1024
+log.appName = 'ratpack';
 
 import WebpackDevServer from 'webpack-dev-server'
 import webpack from 'webpack'
@@ -30,11 +36,11 @@ let db = new DataStore({
 db.find({ _id: 'recently' }, (err, docs) => {
   if(docs.length === 0) {
     db.insert({ _id: 'recently', files: [] }, err => {
-      if(err) return console.error(err) //eslint-disable-line no-console
-      console.log('db initialized') //eslint-disable-line no-console
+      if(err) return log.error(err) //eslint-disable-line no-console
+      log.info('db initialized') //eslint-disable-line no-console
     })
   }
-  else console.log('db restarted')  //eslint-disable-line no-console
+  else log.info('db restarted')  //eslint-disable-line no-console
 })
 
 // todo - move this to main.js 
