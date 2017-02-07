@@ -6,6 +6,8 @@
 import { app, BrowserWindow }  from 'electron'
 import path from 'path'
 
+import createMenu from './menu'
+
 let isProd = path.basename(process.argv[0]).indexOf('ratpack') === 0
 
 let startsWith = require('minimist')(process.argv.slice(1))._[ isProd ? 0 : 1]
@@ -15,14 +17,14 @@ let mainWindow
 app.on('open-file', (e, filepath) => {
   if(!mainWindow ) {
     startsWith = filepath
-    if(!startedOnce) {      
+    if(!startedOnce) {
       return
-    }    
-    createWindow()    
-    return 
-  }    
+    }
+    createWindow()
+    return
+  }
 })
- 
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 
@@ -43,6 +45,9 @@ function createWindow() {
   startsWith = undefined
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  // creates native menu
+  createMenu(mainWindow)
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
